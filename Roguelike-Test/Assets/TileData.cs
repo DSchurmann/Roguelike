@@ -7,4 +7,7 @@ public class TileData : MonoBehaviour
     public int yLocation;
 
     public TileMap map;
+
+    public bool isWalkable;
+    public GameObject unit = null;
 }

@@ -14,4 +14,5 @@ public enum TileType
     Floor,
     Wall,
     Trap,
+    Stairs,
 }
