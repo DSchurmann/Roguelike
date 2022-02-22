@@ -81,12 +81,19 @@ public class TileMap : MonoBehaviour
         }
     }
 
-    private List<GameObject> actors;
-    public GameObject currentActor;
+    public GameObject player;
+    public GameObject enemy;
+    private int startEnemies = 5;
+    private int currentFloor = 1;
 
     //need turn order variable - list?
+    private List<GameObject> turnOrder; //for now, player moves first, iterate through all enemies
+    private int currentTurn = 0;
+    private UnitMovement current;
 
-    [SerializeField] private Tile[] tileTypes; //0 = floor, 1 = wall
+    private List<GameObject> items;
+
+    [SerializeField] private Tile[] tileTypes; //0 = floor, 1 = wall, 2 = stairs
 
     private int[,] tilesType;
     private TileData[,] tiles;
@@ -102,27 +109,64 @@ public class TileMap : MonoBehaviour
 
     void Awake()
     {
-        tiles = new TileData[sizeX, sizeY];
-        rooms = new List<Room>();
-        GenerateMap();
-        DisplayMap();
+        SetupMap();
     }
 
     private void Update()
     {
-        UnitMovement current = currentActor.GetComponent<UnitMovement>();
-        Vector2 currentPos = new Vector2(current.xPos, current.yPos);
-
+        Vector2 currentPos = new Vector2(current.PosX, current.PosY);
+        UnitMovement um = current;
         current.HandleMovement();
-
-        Vector2 newPos = new Vector2(current.xPos, current.yPos);
-        if(currentPos != newPos)
+        Vector2 newPos = new Vector2(current.PosX, current.PosY);
+        if (current == um)
         {
-            GetTile((int)newPos.x, (int)newPos.y).unit = current.gameObject;
-            GetTile((int)currentPos.x, (int)currentPos.y).unit = null;
-            //next unit's turn;
-            Debug.Log("next actor's turn");
+            if (currentPos != newPos)
+            {
+                GetTile((int)newPos.x, (int)newPos.y).Unit = current.gameObject;
+                GetTile((int)currentPos.x, (int)currentPos.y).Unit = null;
+                Debug.Log("unset tile for " + current.name);
+                //next unit's turn;
+                NextTurn();
+            }
         }
+    }
+
+    private void SetupMap()
+    {
+        tiles = new TileData[sizeX, sizeY];
+        rooms = new List<Room>();
+        turnOrder = new List<GameObject>();
+        GenerateMap();
+        DisplayMap();
+        PlacePlayer();
+        PlaceUnits();
+        current = turnOrder[currentTurn].GetComponent<UnitMovement>();
+    }
+
+    private void SetupNextFloor(GameObject player)
+    {
+        foreach(GameObject g in turnOrder)
+        {
+            if(g != player)
+            {
+                Destroy(g);
+            }
+        }
+        for (int i = 0; i < sizeX; i++)
+        {
+            for (int j = 0; j < sizeY; j++)
+            {
+                Destroy(tiles[i, j].gameObject);
+            }
+        }
+        tiles = new TileData[sizeX, sizeY];
+        rooms = new List<Room>();
+        turnOrder = new List<GameObject>();
+        GenerateMap();
+        DisplayMap();
+        MovePlayer(player);
+        PlaceUnits();
+        current = turnOrder[currentTurn].GetComponent<UnitMovement>();
     }
 
     private void GenerateMap()
@@ -162,6 +206,7 @@ public class TileMap : MonoBehaviour
             }
         }
 
+        PlaceStairs();
     }
 
     private void GenerateRoom(Room r)
@@ -201,11 +246,6 @@ public class TileMap : MonoBehaviour
         int x2 = Random.Range(r2.Left + 1, r2.Right - 1);
         int y2 = Random.Range(r2.Bottom - 1, r2.Top + 1);
 
-        Debug.Log($"Room1\nLeft {r1.Left}, Right {r1.Right}\nBottom{r1.Bottom}, Top{r1.Top}");
-        Debug.Log($"Room2\nLeft {r2.Left}, Right {r2.Right}\nBottom{r2.Bottom}, Top{r2.Top}");
-        Debug.Log($"Room 1: {x1}, {y1}\nRoom 2: {x2}, {y2}");
-
-
         int xDist = Mathf.Abs(x1 - x2);
         if(xDist > 5)
         {
@@ -228,8 +268,6 @@ public class TileMap : MonoBehaviour
             }
         }
 
-
-
         while(x1 != x2)
         {
             tilesType[x1, y1] = 0;
@@ -244,6 +282,14 @@ public class TileMap : MonoBehaviour
         r2.IsConnected = true;
     }
 
+    private void PlaceStairs()
+    {
+        Room room = rooms[Random.Range(0, rooms.Count)];
+        int x = Random.Range(room.Left + 1, room.Right - 1);
+        int y = Random.Range(room.Bottom - 1, room.Top + 1);
+        tilesType[x, y] = 2;
+    }
+
     private void DisplayMap()
     {
         for( int x = 0; x < sizeX; x++)
@@ -254,12 +300,57 @@ public class TileMap : MonoBehaviour
                 GameObject g = (GameObject)Instantiate(tile.tilePrefab, new Vector3(x, 0, y), Quaternion.identity);
 
                 TileData data = g.GetComponent<TileData>();
-                data.xLocation = x;
-                data.yLocation = y;
-                data.map = this;
+                data.SetX(x);
+                data.SetY(y);
+                data.SetMap(this);
 
                 tiles[x, y] = data;
             }
+        }
+    }
+
+    private void PlacePlayer()
+    {
+        Room room = rooms[Random.Range(0, rooms.Count)];
+        int x = Random.Range(room.Left + 1, room.Right - 1);
+        int y = Random.Range(room.Bottom - 1, room.Top + 1);
+
+        GameObject g = (GameObject)Instantiate(player, tiles[x, y].transform.position, Quaternion.identity);
+        UnitMovement um = g.GetComponent<UnitMovement>();
+        um.PosX = x;
+        um.PosY = y;
+        um.SetMap(this);
+        turnOrder.Add(g);
+    }
+
+    private void MovePlayer(GameObject g)
+    {
+        Room room = rooms[Random.Range(0, rooms.Count)];
+        int x = Random.Range(room.Left + 1, room.Right - 1);
+        int y = Random.Range(room.Bottom - 1, room.Top + 1);
+
+        UnitMovement um = g.GetComponent<UnitMovement>();
+        um.PosX = x;
+        um.PosY = y;
+        um.transform.position = tiles[x, y].transform.position;
+        turnOrder.Add(g);
+    }
+
+
+    private void PlaceUnits()
+    {
+        for(int i = 0; i < startEnemies; i++)
+        {
+            Room room = rooms[Random.Range(0, rooms.Count)];
+            int x = Random.Range(room.Left + 1, room.Right - 1);
+            int y = Random.Range(room.Bottom - 1, room.Top + 1);
+
+            GameObject g = (GameObject)Instantiate(enemy, tiles[x, y].transform.position, Quaternion.identity);
+            UnitMovement um = g.GetComponent<UnitMovement>();
+            um.PosX = x;
+            um.PosY = y;
+            um.SetMap(this);
+            turnOrder.Add(g);
         }
     }
 
@@ -275,5 +366,27 @@ public class TileMap : MonoBehaviour
             Debug.LogError($"{e}\nError at index [{x}, {y}]");
         }
         return result;
+    }
+
+    public void NextTurn()
+    {
+        currentTurn++;
+        if (currentTurn >= turnOrder.Count)
+        {
+            currentTurn = 0;
+        }
+        current = turnOrder[currentTurn].GetComponent<UnitMovement>();
+    }
+
+    public void RemoveFromTurnOrder(UnitMovement um)
+    {
+        tiles[um.PosX, um.PosY].Unit = null;
+        turnOrder.Remove(um.gameObject);
+    }
+    
+    public void NextFloor(GameObject player)
+    {
+        SetupNextFloor(player);
+        currentFloor++;
     }
 }

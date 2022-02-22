@@ -56,11 +56,18 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\UnitStats.cs" />
     <Compile Include="Assets\UnitMovement.cs" />
     <Compile Include="Assets\TileMap.cs" />
     <Compile Include="Assets\TileData.cs" />
     <Compile Include="Assets\Tile.cs" />
-    <Compile Include="Assets\UnitStats.cs" />
+    <Compile Include="Assets\Stairs.cs" />
+    <Compile Include="Assets\Item.cs" />
+    <Compile Include="Assets\Inventory.cs" />
+    <Compile Include="Assets\PlayerStats.cs" />
+    <Compile Include="Assets\PlayerMovement.cs" />
+    <Compile Include="Assets\ItemObject.cs" />
+    <Compile Include="Assets\EnemyMovement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
