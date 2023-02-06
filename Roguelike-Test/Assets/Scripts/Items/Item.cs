@@ -1,37 +1,19 @@
 ﻿using System;
 using UnityEngine;
 
-[Serializable]
-public class Item
+[CreateAssetMenu(fileName = "Item", menuName = "ScriptableObjects/Item", order = 1)]
+public class Item : ScriptableObject
 {
-    [SerializeField] private string itemName;
-    [SerializeField] private ItemType type;
+    [SerializeField] protected string itemName;
+    [SerializeField] private bool breakable = false;
+    [SerializeField] protected GameObject prefab;
 
-    public Item(string n, ItemType t)
-    {
-        itemName = n;
-        type = t;
+    public string GetName => itemName;
+
+    public virtual InvItem ConvertToInvItem()
+    { 
+        return new InvItem(itemName, prefab);
     }
 
-    public string GetName
-    {
-        get { return itemName; }
-    }
-    public ItemType GetItemType
-    {
-        get { return type; }
-    }
-}
-
-public enum ItemType
-{
-    weapon,
-    head,
-    chest,
-    arms,
-    legs,
-    feet,
-    projectile,
-    consumable,
-    gold
+    public GameObject Prefab => prefab;
 }

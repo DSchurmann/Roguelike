@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using Random = UnityEngine.Random; 
 
 public class UnitStats : MonoBehaviour
@@ -7,29 +6,30 @@ public class UnitStats : MonoBehaviour
     protected int currentHP;
     protected int currentMP;
     [SerializeField] protected int maxHP;
-    [SerializeField] protected int mapMP;
+    [SerializeField] protected int maxMP;
     [SerializeField] protected int attack;
     [SerializeField] protected int armour;
 
     protected int speed;
     protected int exp;
 
-    protected Status status;
+    [SerializeField] protected Status status;
     protected bool takenPoison = false;
     protected int poisonCounter = 0;
     protected int poisonTarget = 10;
     protected string actorName;
 
-    protected Resistance res;
+    [SerializeField] protected Resistance res;
 
     protected virtual void Start()
-    {
+    { 
         currentHP = maxHP;
+        currentMP = maxMP;
         res = new Resistance();
         status = Status.normal;
     }
 
-    public virtual int TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         int dmgToTake = damage - armour;
 
@@ -39,23 +39,45 @@ public class UnitStats : MonoBehaviour
         }
         Debug.Log("Damage: " + dmgToTake);
         currentHP -= dmgToTake;
-        if(currentHP <= 0)
+    }
+
+    public virtual void Heal(int h, bool range)
+    {
+        //range 10% for testing
+        if (range)
         {
-            //die
-            Destroy(gameObject);
-            return exp;
+            int amt = (int)(h / 0.1f);
+            int heal = Random.Range(h - amt, h + amt);
+            currentHP += heal;
         }
-        return 0;
+        else
+        {
+            currentHP += h;
+        }
     }
 
-    public int Attack
+    public void ReduceMana(int d)
     {
-        get { return attack; }
+        currentMP -= d;
+        if (currentMP <= 0)
+        {
+            currentMP = 0;
+        }
     }
 
-    public int Armour
+    public void RestoreMana(int m, bool range)
     {
-        get { return armour; }
+        //range 10% for testing
+        if (range)
+        {
+            int amt = (int)(m / 0.1f);
+            int heal = Random.Range(m - amt, m + amt);
+            currentMP += heal;
+        }
+        else
+        {
+            currentMP += m;
+        }
     }
 
     public bool CheckStatus()
@@ -99,8 +121,24 @@ public class UnitStats : MonoBehaviour
         return canMove;
     }
 
+    public virtual void DropItem(Item i) { }
+
     public void ResetPoison()
     {
         takenPoison = false;
     }
+
+    public float HealthPercent()
+    {
+        return (float)currentHP / (float)maxHP;
+    }
+
+    public float ManaPercent()
+    {
+        return (float)currentMP / (float)maxMP;
+    }
+
+    public virtual int Attack => attack;
+
+    public virtual int Armour => armour;
 }

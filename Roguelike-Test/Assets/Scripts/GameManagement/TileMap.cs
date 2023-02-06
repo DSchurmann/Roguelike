@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
 [Serializable]
@@ -35,11 +34,11 @@ public class TileMap : MonoBehaviour
             {
                 return false;
             }
-            if (Right < other.left + 1)
+            if (Right < other.Left + 1)
             {
                 return false;
             }
-            if(Bottom < other.top + 1)
+            if(Bottom < other.Top + 1)
             {
                 return false;
             }
@@ -83,10 +82,30 @@ public class TileMap : MonoBehaviour
         }
     }
 
+    public struct Floor
+    {
+        private int[,] tilesTypes;
+        private int x;
+        private int y;
+
+        public Floor(int[,] tt, int sX, int sY)
+        {
+            tilesTypes = tt;
+            x = sX;
+            y = sY;
+        }
+
+        public int[,] Tiles => tilesTypes;
+        public int X => x;
+        public int Y => y;
+    }
+
     public GameObject player;
     public GameObject enemy;
+    private GameObject floor;
     private int startEnemies = 5;
     private int currentFloor = 1;
+    private List<Floor> floors = new List<Floor>();
 
     [SerializeField] private List<GameObject> items;
     private int itemsToPlace = 10;
@@ -107,6 +126,8 @@ public class TileMap : MonoBehaviour
 
     public void SetupMap()
     {
+        floor = Instantiate(new GameObject());
+        floors = new List<Floor>();
         tiles = new TileData[sizeX, sizeY];
         rooms = new List<Room>();
         GenerateMap();
@@ -116,6 +137,28 @@ public class TileMap : MonoBehaviour
 
     private void SetupNextFloor()
     {
+        DestroyFloor();
+        tiles = new TileData[sizeX, sizeY];
+        rooms = new List<Room>();
+        floors.Add(new Floor(tilesType, sizeX, sizeY));
+        currentFloor++;
+        GenerateMap();
+        DisplayMap();
+        PlaceItems();
+    }
+
+    private void PreviousFloor()
+    {
+        DestroyFloor();
+        currentFloor--;
+        tilesType = floors[currentFloor].Tiles;
+        tiles = new TileData[floors[currentFloor].X, floors[currentFloor].Y];
+        DisplayMap();
+        PlaceItems();
+    }
+
+    private void DestroyFloor()
+    {
         for (int i = 0; i < sizeX; i++)
         {
             for (int j = 0; j < sizeY; j++)
@@ -123,11 +166,6 @@ public class TileMap : MonoBehaviour
                 Destroy(tiles[i, j].gameObject);
             }
         }
-        tiles = new TileData[sizeX, sizeY];
-        rooms = new List<Room>();
-        GenerateMap();
-        DisplayMap();
-        PlaceItems();
     }
 
     private void GenerateMap()
@@ -278,12 +316,13 @@ public class TileMap : MonoBehaviour
 
     private void DisplayMap()
     {
+        floor.name = "floor " + currentFloor;
         for( int x = 0; x < sizeX; x++)
         {
             for(int y = 0; y < sizeY; y++)
             {
                 Tile tile = tileTypes[tilesType[x, y]];
-                GameObject g = (GameObject)Instantiate(tile.tilePrefab, new Vector3(x, 0, y), Quaternion.identity);
+                GameObject g = Instantiate(tile.tilePrefab, new Vector3(x, 0, y), Quaternion.identity);
 
                 TileData data = g.GetComponent<TileData>();
                 data.SetX(x);
@@ -291,6 +330,7 @@ public class TileMap : MonoBehaviour
                 data.SetMap(this);
 
                 tiles[x, y] = data;
+                g.transform.parent = floor.transform;
             }
         }
     }
@@ -309,14 +349,19 @@ public class TileMap : MonoBehaviour
             y = Random.Range(room.Bottom - 1, room.Top + 1);
         } while (tiles[x, y].Unit != null);
 
-        GameObject g = (GameObject)Instantiate(player, tiles[x, y].transform.position, Quaternion.identity);
+        GameObject g = Instantiate(player, tiles[x, y].transform.position, Quaternion.identity);
         PlayerInputs um = g.GetComponent<PlayerInputs>();
         um.PosX = x;
         um.PosY = y;
         um.SetMap(this);
         um.SetInput(pim);
 
+        GameObject item = Instantiate(items[1], tiles[x, y].transform.position, Quaternion.identity);
+        tiles[x, y].Item = item;
+
+
         players.Add(g);
+        tiles[x, y].Unit = g;
         return players;
     }
 
@@ -338,6 +383,7 @@ public class TileMap : MonoBehaviour
             um.PosX = x;
             um.PosY = y;
             um.transform.position = tiles[x, y].transform.position;
+            tiles[x, y].Unit = um.gameObject;
         }
     }
 
@@ -350,13 +396,19 @@ public class TileMap : MonoBehaviour
             Room room = rooms[Random.Range(0, rooms.Count)];
             int x = Random.Range(room.Left + 1, room.Right - 1);
             int y = Random.Range(room.Bottom - 1, room.Top + 1);
+            do
+            {
+                x = Random.Range(room.Left + 1, room.Right - 1);
+                y = Random.Range(room.Bottom - 1, room.Top + 1);
+            } while (tiles[x, y].Unit != null);
 
-            GameObject g = (GameObject)Instantiate(enemy, tiles[x, y].transform.position, Quaternion.identity);
+            GameObject g = Instantiate(enemy, tiles[x, y].transform.position, Quaternion.identity);
             UnitMovement um = g.GetComponent<UnitMovement>();
             um.PosX = x;
             um.PosY = y;
             um.SetMap(this);
             result.Add(g);
+            tiles[x, y].Unit = g;
         }
 
         return result;
@@ -375,7 +427,7 @@ public class TileMap : MonoBehaviour
 
                 if (tiles[x, y].Item == null && tiles[x,y].CanHaveItem)
                 {
-                    GameObject item = (GameObject)Instantiate(items[0], tiles[x, y].transform.position, Quaternion.identity);
+                    GameObject item = Instantiate(items[0], tiles[x, y].transform.position, Quaternion.identity);
                     tiles[x, y].Item = item;
                     placed = !placed;
                 }
@@ -412,4 +464,6 @@ public class TileMap : MonoBehaviour
         SetupNextFloor();
         currentFloor++;
     }
+
+    public int CurrentFloor => currentFloor;
 }

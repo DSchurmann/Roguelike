@@ -52,6 +52,22 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Run",
+                    "type": "Button",
+                    "id": "cf357fc5-e018-4f21-8c00-e7c468eb0cc3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Diagonal",
+                    "type": "Button",
+                    "id": "21ceb03d-2839-477c-bdee-4e55ab3bafe6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -63,17 +79,6 @@
                     "processors": "",
                     "groups": "ControlScheme",
                     "action": "Attack",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "38699c34-3858-4791-8d53-3a1b28a2eeef",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "ControlScheme",
-                    "action": "Menu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -129,6 +134,28 @@
                     "processors": "",
                     "groups": "ControlScheme",
                     "action": "Right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a7754d6f-28fd-4a00-aa02-ac8be31aebec",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "ControlScheme",
+                    "action": "Run",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "99ee7510-b130-4847-ba7b-784439375102",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "ControlScheme",
+                    "action": "Diagonal",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -238,17 +265,6 @@
                     "processors": "",
                     "groups": "ControlScheme",
                     "action": "Accept",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "fb9326ea-a272-40a5-951b-ce48f8b6845a",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "ControlScheme",
-                    "action": "Decline",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

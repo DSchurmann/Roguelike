@@ -56,30 +56,54 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Items\InvHead.cs" />
+    <Compile Include="Assets\Scripts\Items\InvAccessory.cs" />
     <Compile Include="Assets\Scripts\Items\Item.cs" />
     <Compile Include="Assets\Scripts\GameManagement\CollisionManager.cs" />
+    <Compile Include="Assets\Scripts\Items\Equipable.cs" />
+    <Compile Include="Assets\Scripts\GameManagement\UI\MenusInputManager.cs" />
+    <Compile Include="Assets\Scripts\GameManagement\UI\Display.cs" />
     <Compile Include="Assets\Scripts\GameManagement\TurnController.cs" />
+    <Compile Include="Assets\Scripts\Items\Projectile.cs" />
+    <Compile Include="Assets\Scripts\Items\InvWeapon.cs" />
     <Compile Include="Assets\Scripts\Units\EnemyMovement.cs" />
+    <Compile Include="Assets\Scripts\GameManagement\UI\GameplayUI.cs" />
+    <Compile Include="Assets\Scripts\GameManagement\UI\States\StatusUI.cs" />
+    <Compile Include="Assets\Scripts\GameManagement\UI\States\UIState.cs" />
+    <Compile Include="Assets\Scripts\Items\Wand.cs" />
     <Compile Include="Assets\Scripts\Utility\Position.cs" />
+    <Compile Include="Assets\Scripts\GameManagement\UI\States\GroundUI.cs" />
+    <Compile Include="Assets\Scripts\Items\InvArmour.cs" />
     <Compile Include="Assets\Scripts\GameManagement\MovementHandler.cs" />
     <Compile Include="Assets\Scripts\GameManagement\CameraController.cs" />
+    <Compile Include="Assets\Scripts\GameManagement\UI\DisplayItem.cs" />
     <Compile Include="Assets\Scripts\GameManagement\PlayerInputManager.cs" />
     <Compile Include="Assets\Scripts\Units\UnitStats.cs" />
     <Compile Include="Assets\Scripts\Units\EnemyStats.cs" />
     <Compile Include="Assets\Scripts\Units\UnitMovement.cs" />
+    <Compile Include="Assets\Scripts\Items\Head.cs" />
     <Compile Include="Assets\Scripts\Utility\Resistance.cs" />
+    <Compile Include="Assets\Scripts\Items\Armour.cs" />
     <Compile Include="Assets\Scripts\Items\ItemObject.cs" />
     <Compile Include="Assets\Scripts\Units\PlayerStats.cs" />
     <Compile Include="Assets\Scripts\Units\PlayerInputs.cs" />
     <Compile Include="Assets\Scripts\GameManagement\TileMap.cs" />
+    <Compile Include="Assets\Scripts\GameManagement\UI\UIManager.cs" />
     <Compile Include="Assets\Scripts\Units\Inventory.cs" />
+    <Compile Include="Assets\Scripts\Items\Consumable.cs" />
+    <Compile Include="Assets\Scripts\Items\Weapon.cs" />
     <Compile Include="Assets\Scripts\GameManagement\Stairs.cs" />
+    <Compile Include="Assets\Scripts\GameManagement\UI\States\ItemUI.cs" />
+    <Compile Include="Assets\Scripts\Items\Accessory.cs" />
     <Compile Include="Assets\Scripts\GameManagement\TileData.cs" />
+    <Compile Include="Assets\Scripts\Units\Stats.cs" />
     <Compile Include="Assets\Scripts\GameManagement\Tile.cs" />
     <Compile Include="Assets\Scripts\GameManagement\GameController.cs" />
     <Compile Include="Assets\Scripts\Utility\Status.cs" />
-    <Compile Include="Assets\UIManager.cs" />
-    <Compile Include="Assets\Scripts\GameManagement\MenusInputManager.cs" />
+    <Compile Include="Assets\Scripts\Items\Gold.cs" />
+    <Compile Include="Assets\Scripts\GameManagement\UI\ButtonCursor.cs" />
+    <Compile Include="Assets\Scripts\Items\InvItem.cs" />
+    <Compile Include="Assets\Scripts\Utility\Enumerations.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

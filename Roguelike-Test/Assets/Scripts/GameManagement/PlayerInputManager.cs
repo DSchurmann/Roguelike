@@ -8,6 +8,8 @@ public class PlayerInputManager : MonoBehaviour
     private bool down;
     private bool left;
     private bool right;
+    private bool run;
+    private bool diagonal;
 
     //actions
     private bool attack;
@@ -80,6 +82,40 @@ public class PlayerInputManager : MonoBehaviour
     public bool Right
     {
         get => right;
+    }
+
+    public void GetRun(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started)
+        {
+            run = true;
+        }
+        if (ctx.canceled)
+        {
+            run = false;
+        }
+    }
+    public bool SetRunFalse() => run = false;
+    public bool Run
+    {
+        get => run;
+    }
+
+    public void GetDiagonal(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started)
+        {
+            diagonal = true;
+        }
+        if (ctx.canceled)
+        {
+            diagonal = false;
+        }
+    }
+    public bool SetDiagonalFalse() => diagonal = false;
+    public bool Diagonal
+    {
+        get => diagonal;
     }
 
     //attack input

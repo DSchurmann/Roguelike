@@ -10,6 +10,18 @@ public class UnitMovement : MonoBehaviour
     protected int yPos;
     protected bool controllable = false;
     protected UnitStats stats;
+    [SerializeField]
+    private Dictionary<Dir, Vector3> rotations = new Dictionary<Dir, Vector3>()
+    {
+        {Dir.left, new Vector3(0, -90, 0) },
+        {Dir.right, new Vector3(0, 90, 0)},
+        {Dir.up, new Vector3(0, 0, 0)},
+        {Dir.down, new Vector3(0, 180, 0) },
+        {Dir.leftUp, new Vector3(0, -45, 0)},
+        {Dir.rightUp, new Vector3(0,45, 0) },
+        {Dir.leftDown, new Vector3(0, -135, 0) },
+        {Dir.rightDown, new Vector3(0, 135, 0) }
+    };
 
     protected virtual void Start()
     {
@@ -24,6 +36,13 @@ public class UnitMovement : MonoBehaviour
         GameController.Instance.RemoveActor(this);
     }
 
+    protected void FacingDirection(Dir dir)
+    {
+        transform.eulerAngles = rotations[dir];
+    }
+
+    protected virtual void Attack() { }
+
     public virtual Position HandleMovement() { return new Position(); }
 
     public void SetMap(TileMap m)
@@ -31,10 +50,19 @@ public class UnitMovement : MonoBehaviour
         map = m;
     }
 
-    public void SetPosition(Position pos)
+    public TileData GetTile()
     {
-        xPos = pos.x;
-        yPos = pos.y;
+        return map.GetTile(xPos, yPos);
+    }
+
+    public Position Position
+    {
+        get => new Position(xPos, yPos);
+        set
+        {
+            xPos = value.x;
+            yPos = value.y;
+        }
     }
 
     public int PosX
@@ -46,5 +74,18 @@ public class UnitMovement : MonoBehaviour
     {
         get { return yPos; }
         set { yPos = value; }
+    }
+
+    protected enum Dir
+    {
+        none,
+        left,
+        right,
+        up,
+        down,
+        leftUp,
+        leftDown,
+        rightUp,
+        rightDown,
     }
 }

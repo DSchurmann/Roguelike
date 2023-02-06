@@ -1,13 +1,12 @@
-﻿using System;
+﻿using UnityEngine;
 
 public class Stairs : TileData
 {
-    private void Update()
+    public void Check()
     {
         if(unit && unit.tag == "Player")
         {
-            GameController.Instance.NextFloor();
-            unit = null;
+            GameController.Instance.Ground();
         }
     }
 }

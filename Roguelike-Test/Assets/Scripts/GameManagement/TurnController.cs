@@ -36,7 +36,7 @@ public class TurnController
     public void NextTurn()
     {
         current++;
-        if(current > actors.Count)
+        if(current > turnOrder.Count - 1)
         {
             current = 0;
         }

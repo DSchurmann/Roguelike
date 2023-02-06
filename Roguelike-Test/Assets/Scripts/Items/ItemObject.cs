@@ -4,8 +4,5 @@ public class ItemObject : MonoBehaviour
 {
     [SerializeField] private Item item;
 
-    public Item GetItem
-    {
-        get { return item; }
-    }
+    public Item GetItem => item;
 }
