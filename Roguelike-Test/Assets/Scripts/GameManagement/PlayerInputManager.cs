@@ -10,6 +10,7 @@ public class PlayerInputManager : MonoBehaviour
     private bool right;
     private bool run;
     private bool diagonal;
+    private bool face;
 
     //actions
     private bool attack;
@@ -116,6 +117,38 @@ public class PlayerInputManager : MonoBehaviour
     public bool Diagonal
     {
         get => diagonal;
+    }
+
+    public void GetFace(InputAction.CallbackContext ctx)
+    {
+        if (ctx.started)
+        {
+            face = true;
+        }
+        if (ctx.canceled)
+        {
+            face = false;
+        }
+    }
+    public bool SetFaceFalse() => face = false;
+    public bool Face
+    {
+        get => face;
+    }
+
+    public bool AllMovementFalse()
+    { 
+        if(!up && !down && !left && !right)
+            return true;
+        return false;
+    }
+
+    public void SetAllMovementFalse()
+    {
+        up = false;
+        down = false;
+        left = false;
+        right = false;
     }
 
     //attack input
